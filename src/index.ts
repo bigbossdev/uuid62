@@ -22,7 +22,7 @@ export function encode(uuid: string): string {
     const normalized = normalizeUuid(uuid);
     const hex = BigInt('0x' + normalized);
     
-    if (hex === 0n) return '0';
+    if (hex === 0n) return '0'.padStart(22, '0');
     
     let result = '';
     let num = hex;
@@ -32,7 +32,7 @@ export function encode(uuid: string): string {
         num = num / 62n;
     }
     
-    return result;
+    return result.padStart(22, '0');
 }
 
 /**

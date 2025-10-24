@@ -22,8 +22,8 @@ UUID(Universally Unique Identifier)를 Base62로 인코딩/디코딩하는 TypeS
 - 예: `5wbwf6yUxVBcr48AMbz9cb` → `f47ac10b-58cc-4372-a567-0e02b2c3d479`
 
 ### 3. Base62 문자셋
-- 사용 문자: `0-9`, `A-Z`, `a-z` (총 62개 문자)
-- 순서: `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
+- 사용 문자: `0-9`, `a-z`, `A-Z` (총 62개 문자)
+- 순서: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
 ## 기술 요구사항
 

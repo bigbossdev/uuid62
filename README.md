@@ -120,7 +120,7 @@ Validates if a string is a valid Base62 format.
 
 ## Base62 Character Set
 
-Uses the following 62 characters: `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
+Uses the following 62 characters: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
 ## Performance
 

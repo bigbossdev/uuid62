@@ -6,8 +6,21 @@ describe('UUID62 Library Tests', () => {
         const uuid = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
         const encoded = encode(uuid);
         expect(typeof encoded).toBe('string');
-        expect(encoded.length).toBeGreaterThan(0);
+        expect(encoded.length).toBe(22);
         expect(isValidBase62(encoded)).toBe(true);
+    });
+
+    test('encode: should always return 22-character string', () => {
+        const testUuids = [
+            '00000000-0000-0000-0000-000000000000',
+            'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+            'ffffffff-ffff-ffff-ffff-ffffffffffff'
+        ];
+        
+        testUuids.forEach(uuid => {
+            const encoded = encode(uuid);
+            expect(encoded.length).toBe(22);
+        });
     });
 
     test('encode: should handle UUID without hyphens', () => {
