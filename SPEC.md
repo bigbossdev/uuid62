@@ -15,11 +15,11 @@ UUID(Universally Unique Identifier)를 Base62로 인코딩/디코딩하는 TypeS
 
 ### 1. UUID to Base62 변환
 - 표준 UUID (36자리, 하이픈 포함)를 Base62 문자열로 변환
-- 예: `f47ac10b-58cc-4372-a567-0e02b2c3d479` → `5wbwf6yUxVBcr48AMbz9cb`
+- 예: `49ceabcf-5e02-4449-be28-a9b341df4b08` → `2fgT6HSnoa1fpeINbxJIo0`
 
 ### 2. Base62 to UUID 변환  
 - Base62 문자열을 표준 UUID 형식으로 복원
-- 예: `5wbwf6yUxVBcr48AMbz9cb` → `f47ac10b-58cc-4372-a567-0e02b2c3d479`
+- 예: `2fgT6HSnoa1fpeINbxJIo0` → `49ceabcf-5e02-4449-be28-a9b341df4b08`
 
 ### 3. Base62 문자셋
 - 사용 문자: `0-9`, `a-z`, `A-Z` (총 62개 문자)
@@ -45,24 +45,24 @@ const uuid62 = require('@bboss/uuid62');
 
 // Base62 UUID 생성
 const uuid = uuid62.v4();
-// → 3D4bh7HM9Y8EpjkcC9H1uT
+// → 2fgT6HSnoa1fpeINbxJIo0 (random)
 
 // Base62를 표준 UUID로 디코딩
-const originalUUID = uuid62.decode(uuid);
-// → a1b2c3d4-e5f6-7890-abcd-ef1234567890
+const originalUUID = uuid62.decode('2fgT6HSnoa1fpeINbxJIo0');
+// → 49ceabcf-5e02-4449-be28-a9b341df4b08
 
 // 기존 UUID를 Base62로 인코딩
-const encoded = uuid62.encode('f47ac10b-58cc-4372-a567-0e02b2c3d479');
-// → 5wbwf6yUxVBcr48AMbz9cb
+const encoded = uuid62.encode('49ceabcf-5e02-4449-be28-a9b341df4b08');
+// → 2fgT6HSnoa1fpeINbxJIo0
 
 // UUID 형식 검증
-const isValidUuid1 = uuid62.isValidUuid('f47ac10b-58cc-4372-a567-0e02b2c3d479');
+const isValidUuid1 = uuid62.isValidUuid('49ceabcf-5e02-4449-be28-a9b341df4b08');
 // → true
 const isValidUuid2 = uuid62.isValidUuid('invalid-uuid');
 // → false
 
 // Base62 형식 검증
-const isValidBase62_1 = uuid62.isValidBase62('5wbwf6yUxVBcr48AMbz9cb');
+const isValidBase62_1 = uuid62.isValidBase62('2fgT6HSnoa1fpeINbxJIo0');
 // → true
 const isValidBase62_2 = uuid62.isValidBase62('invalid@base62!');
 // → false

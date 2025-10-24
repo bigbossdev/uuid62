@@ -34,15 +34,15 @@ const uuid62 = require('@bboss/uuid62');
 
 // Generate a new Base62 UUID
 const shortId = uuid62.v4();
-console.log(shortId); // → "3D4bh7HM9Y8EpjkcC9H1uT"
+console.log(shortId); // → "2fgT6HSnoa1fpeINbxJIo0" (random)
 
 // Decode Base62 back to standard UUID
-const standardUuid = uuid62.decode(shortId);
-console.log(standardUuid); // → "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+const standardUuid = uuid62.decode('2fgT6HSnoa1fpeINbxJIo0');
+console.log(standardUuid); // → "49ceabcf-5e02-4449-be28-a9b341df4b08"
 
 // Encode existing UUID to Base62
-const encoded = uuid62.encode('f47ac10b-58cc-4372-a567-0e02b2c3d479');
-console.log(encoded); // → "5wbwf6yUxVBcr48AMbz9cb"
+const encoded = uuid62.encode('49ceabcf-5e02-4449-be28-a9b341df4b08');
+console.log(encoded); // → "2fgT6HSnoa1fpeINbxJIo0"
 ```
 
 ### TypeScript Usage
@@ -55,7 +55,7 @@ const id: string = v4();
 const isValid: boolean = isValidBase62(id);
 
 // Type-safe encoding/decoding
-const uuid: string = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
+const uuid: string = '49ceabcf-5e02-4449-be28-a9b341df4b08';
 const encoded: string = encode(uuid);
 const decoded: string = decode(encoded);
 ```
@@ -66,12 +66,12 @@ const decoded: string = decode(encoded);
 const uuid62 = require('@bboss/uuid62');
 
 // Validate UUID format
-console.log(uuid62.isValidUuid('f47ac10b-58cc-4372-a567-0e02b2c3d479')); // → true
-console.log(uuid62.isValidUuid('f47ac10b58cc4372a5670e02b2c3d479'));   // → true (no hyphens)
+console.log(uuid62.isValidUuid('49ceabcf-5e02-4449-be28-a9b341df4b08')); // → true
+console.log(uuid62.isValidUuid('49ceabcf5e024449be28a9b341df4b08'));   // → true (no hyphens)
 console.log(uuid62.isValidUuid('invalid-uuid'));                        // → false
 
 // Validate Base62 format
-console.log(uuid62.isValidBase62('5wbwf6yUxVBcr48AMbz9cb')); // → true
+console.log(uuid62.isValidBase62('2fgT6HSnoa1fpeINbxJIo0')); // → true
 console.log(uuid62.isValidBase62('invalid@base62!'));        // → false
 ```
 

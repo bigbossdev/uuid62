@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.1]
+
+### Changed
+- Updated README.md examples to use consistent UUID/Base62 values that match actual encoding/decoding results
+
 ## [1.1.0]
 
 ### Changed
