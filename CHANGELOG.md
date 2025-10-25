@@ -15,7 +15,9 @@
 - Fixed-length Base62 encoding (always 22 characters)
 - Zero-padding for shorter encoded values
 
-## [1.0.0]
+## [1.0.0] - REMOVED
+
+**Note**: This version has been removed from the NPM registry.
 
 - Initial release
 - UUID to Base62 encoding/decoding
