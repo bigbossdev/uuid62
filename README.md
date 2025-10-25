@@ -7,7 +7,7 @@ A lightweight TypeScript library for encoding and decoding UUIDs to/from Base62 
 - 🚀 **Fast & Lightweight**: Zero dependencies, optimized for performance
 - 🔒 **Node.js Only**: Built specifically for server-side applications
 - 📦 **TypeScript Native**: Full TypeScript support with type definitions
-- 🧪 **Well Tested**: 90%+ test coverage with comprehensive test suite
+- 🧪 **Well Tested**: Comprehensive test suite with high coverage
 - 🔧 **Simple API**: Easy-to-use functions for encoding, decoding, and validation
 
 ## Installation
@@ -23,56 +23,29 @@ yarn add @bboss/uuid62
 ## Requirements
 
 - Node.js 16.0.0 or higher (requires `crypto.randomUUID()`)
-- Not compatible with browser environments
+- **Node.js only** - not compatible with browser environments
 
 ## Usage
 
-### Basic Usage
-
 ```javascript
-const uuid62 = require('@bboss/uuid62');
+import uuid62 from '@bboss/uuid62';
+// const uuid62 = require('@bboss/uuid62'); // legacy way
 
 // Generate a new Base62 UUID
 const shortId = uuid62.v4();
 console.log(shortId); // → "2fgT6HSnoa1fpeINbxJIo0" (random)
 
-// Decode Base62 back to standard UUID
-const standardUuid = uuid62.decode('2fgT6HSnoa1fpeINbxJIo0');
-console.log(standardUuid); // → "49ceabcf-5e02-4449-be28-a9b341df4b08"
-
 // Encode existing UUID to Base62
 const encoded = uuid62.encode('49ceabcf-5e02-4449-be28-a9b341df4b08');
 console.log(encoded); // → "2fgT6HSnoa1fpeINbxJIo0"
-```
 
-### TypeScript Usage
+// Decode Base62 back to standard UUID
+const decoded = uuid62.decode('2fgT6HSnoa1fpeINbxJIo0');
+console.log(decoded); // → "49ceabcf-5e02-4449-be28-a9b341df4b08"
 
-```typescript
-import { v4, encode, decode, isValidUuid, isValidBase62 } from '@bboss/uuid62';
-
-// Generate and validate
-const id: string = v4();
-const isValid: boolean = isValidBase62(id);
-
-// Type-safe encoding/decoding
-const uuid: string = '49ceabcf-5e02-4449-be28-a9b341df4b08';
-const encoded: string = encode(uuid);
-const decoded: string = decode(encoded);
-```
-
-### Validation
-
-```javascript
-const uuid62 = require('@bboss/uuid62');
-
-// Validate UUID format
+// Validation
 console.log(uuid62.isValidUuid('49ceabcf-5e02-4449-be28-a9b341df4b08')); // → true
-console.log(uuid62.isValidUuid('49ceabcf5e024449be28a9b341df4b08'));   // → true (no hyphens)
-console.log(uuid62.isValidUuid('invalid-uuid'));                        // → false
-
-// Validate Base62 format
 console.log(uuid62.isValidBase62('2fgT6HSnoa1fpeINbxJIo0')); // → true
-console.log(uuid62.isValidBase62('invalid@base62!'));        // → false
 ```
 
 ## API Reference
@@ -118,16 +91,6 @@ Validates if a string is a valid Base62 format.
 
 **Returns:** `true` if valid Base62, `false` otherwise
 
-## Base62 Character Set
-
-Uses the following 62 characters: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
-
-## Performance
-
-- **Encoding/Decoding**: ~14,000+ operations per second
-- **Memory Usage**: Minimal footprint with zero dependencies
-- **Test Results**: 1000 round-trip operations in ~70ms
-
 ## Error Handling
 
 The library throws descriptive errors for invalid inputs:
@@ -146,14 +109,9 @@ try {
 }
 ```
 
-## Browser Compatibility
+## Base62 Character Set
 
-This library is **Node.js only** and will throw an error if used in browser environments:
-
-```javascript
-// In browser environment:
-// Error: @bboss/uuid62 is Node.js only and cannot run in browser environments
-```
+Uses the following 62 characters: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
 ## License
 
