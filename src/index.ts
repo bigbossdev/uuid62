@@ -71,14 +71,21 @@ export function v4(): string {
     return encode(uuid);
 }
 
+/**
+ * Generates a new UUID v4 and encodes it to Base62 (alias for v4)
+ */
+export function generateBase62(): string {
+    return v4();
+}
+
 // Export utility functions
-export { isValidUuid, isValidBase62 };
+export { isValidBase62 };
 
 // Default export for CommonJS compatibility
 export default {
     encode,
     decode,
     v4,
-    isValidUuid,
+    generateBase62,
     isValidBase62
 };

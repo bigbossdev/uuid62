@@ -35,6 +35,10 @@ import uuid62 from '@bboss/uuid62';
 const shortId = uuid62.v4();
 console.log(shortId); // → "2fgT6HSnoa1fpeINbxJIo0" (random)
 
+// Alternative way to generate Base62 UUID
+const shortId2 = uuid62.generateBase62();
+console.log(shortId2); // → "3hgU7ITopa2gqfJOcyKJp1" (random)
+
 // Encode existing UUID to Base62
 const encoded = uuid62.encode('49ceabcf-5e02-4449-be28-a9b341df4b08');
 console.log(encoded); // → "2fgT6HSnoa1fpeINbxJIo0"
@@ -44,7 +48,6 @@ const decoded = uuid62.decode('2fgT6HSnoa1fpeINbxJIo0');
 console.log(decoded); // → "49ceabcf-5e02-4449-be28-a9b341df4b08"
 
 // Validation
-console.log(uuid62.isValidUuid('49ceabcf-5e02-4449-be28-a9b341df4b08')); // → true
 console.log(uuid62.isValidBase62('2fgT6HSnoa1fpeINbxJIo0')); // → true
 ```
 
@@ -52,6 +55,11 @@ console.log(uuid62.isValidBase62('2fgT6HSnoa1fpeINbxJIo0')); // → true
 
 ### `v4(): string`
 Generates a new UUID v4 using `crypto.randomUUID()` and encodes it to Base62.
+
+**Returns:** Base62 encoded UUID string
+
+### `generateBase62(): string`
+Generates a new UUID v4 using `crypto.randomUUID()` and encodes it to Base62 (alias for v4).
 
 **Returns:** Base62 encoded UUID string
 
@@ -74,14 +82,6 @@ Decodes a Base62 string back to standard UUID format.
 **Returns:** Standard UUID string with hyphens
 
 **Throws:** Error if Base62 format is invalid
-
-### `isValidUuid(str: string): boolean`
-Validates if a string is a valid UUID format.
-
-**Parameters:**
-- `str` - String to validate
-
-**Returns:** `true` if valid UUID, `false` otherwise
 
 ### `isValidBase62(str: string): boolean`
 Validates if a string is a valid Base62 format.

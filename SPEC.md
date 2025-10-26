@@ -29,13 +29,10 @@ UUID(Universally Unique Identifier)를 Base62로 인코딩/디코딩하는 TypeS
 
 ### API 설계
 ```typescript
-// 기본 함수
-v4(): string                     // crypto.randomUUID() + Base62 변환
-encode(uuid: string): string     // UUID → Base62
-decode(base62: string): string   // Base62 → UUID
-
-// 유틸리티 함수
-isValidUuid(str: string): boolean    // UUID 형식 검증
+v4(): string                         // crypto.randomUUID() + Base62 변환
+generateBase62(): string             // v4()와 동일한 기능
+encode(uuid: string): string         // UUID → Base62
+decode(base62: string): string       // Base62 → UUID
 isValidBase62(str: string): boolean  // Base62 형식 검증
 ```
 
@@ -47,6 +44,10 @@ const uuid62 = require('@bboss/uuid62');
 const uuid = uuid62.v4();
 // → 2fgT6HSnoa1fpeINbxJIo0 (random)
 
+// 대체 방법으로 Base62 UUID 생성
+const uuid2 = uuid62.generateBase62();
+// → 3hgU7ITopa2gqfJOcyKJp1 (random)
+
 // Base62를 표준 UUID로 디코딩
 const originalUUID = uuid62.decode('2fgT6HSnoa1fpeINbxJIo0');
 // → 49ceabcf-5e02-4449-be28-a9b341df4b08
@@ -54,12 +55,6 @@ const originalUUID = uuid62.decode('2fgT6HSnoa1fpeINbxJIo0');
 // 기존 UUID를 Base62로 인코딩
 const encoded = uuid62.encode('49ceabcf-5e02-4449-be28-a9b341df4b08');
 // → 2fgT6HSnoa1fpeINbxJIo0
-
-// UUID 형식 검증
-const isValidUuid1 = uuid62.isValidUuid('49ceabcf-5e02-4449-be28-a9b341df4b08');
-// → true
-const isValidUuid2 = uuid62.isValidUuid('invalid-uuid');
-// → false
 
 // Base62 형식 검증
 const isValidBase62_1 = uuid62.isValidBase62('2fgT6HSnoa1fpeINbxJIo0');

@@ -1,4 +1,4 @@
-import { encode, decode, v4, isValidUuid, isValidBase62 } from '../src/index';
+import { encode, decode, v4, generateBase62, isValidBase62 } from '../src/index';
 
 describe('UUID62 Library Tests', () => {
     
@@ -53,7 +53,7 @@ describe('UUID62 Library Tests', () => {
         
         // Should be able to decode back to valid UUID
         const decoded = decode(uuid);
-        expect(isValidUuid(decoded)).toBe(true);
+        expect(decoded).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
     });
 
     test('v4: should generate unique values', () => {
@@ -62,13 +62,36 @@ describe('UUID62 Library Tests', () => {
         expect(uuid1).not.toBe(uuid2);
     });
 
-    test('isValidUuid: should validate UUID formats', () => {
-        expect(isValidUuid('f47ac10b-58cc-4372-a567-0e02b2c3d479')).toBe(true);
-        expect(isValidUuid('f47ac10b58cc4372a5670e02b2c3d479')).toBe(true);
-        expect(isValidUuid('invalid-uuid')).toBe(false);
-        expect(isValidUuid('')).toBe(false);
-        expect(isValidUuid('f47ac10b-58cc-4372-a567')).toBe(false);
+    test('generateBase62: should generate valid Base62 UUID', () => {
+        const uuid = generateBase62();
+        expect(typeof uuid).toBe('string');
+        expect(isValidBase62(uuid)).toBe(true);
+        
+        // Should be able to decode back to valid UUID
+        const decoded = decode(uuid);
+        expect(decoded).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
     });
+
+    test('generateBase62: should generate unique values', () => {
+        const uuid1 = generateBase62();
+        const uuid2 = generateBase62();
+        expect(uuid1).not.toBe(uuid2);
+    });
+
+    test('generateBase62: should work identically to v4', () => {
+        // Both functions should produce valid Base62 UUIDs
+        const v4Result = v4();
+        const generateResult = generateBase62();
+        
+        expect(isValidBase62(v4Result)).toBe(true);
+        expect(isValidBase62(generateResult)).toBe(true);
+        
+        // Both should decode to valid UUIDs
+        expect(decode(v4Result)).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+        expect(decode(generateResult)).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+    });
+
+
 
     test('isValidBase62: should validate Base62 formats', () => {
         expect(isValidBase62('5wbwf6yUxVBcr48AMbz9cb')).toBe(true);
