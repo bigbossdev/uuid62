@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.0] - 2025-10-27
+
+- Added `generateBase62()` function as an alias for `v4()`
+- Removed `isValidUuid()` from public API (kept as internal function)
+
 ## [1.1.2] - 2025-10-26
 
 - Improved CI/CD workflow and yarn consistency
