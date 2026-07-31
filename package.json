@@ -38,7 +38,7 @@
         "node": ">=16.0.0"
     },
     "scripts": {
-        "build": "rimraf dist && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && node scripts/postbuild.js",
+        "build": "rimraf dist && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && node scripts/postbuild.js && node scripts/verify-dual-build.js",
         "test": "jest",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
