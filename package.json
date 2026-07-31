@@ -20,8 +20,15 @@
         "url": "https://github.com/bigbossdev/uuid62/issues"
     },
     "homepage": "https://github.com/bigbossdev/uuid62#readme",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "dist/cjs/index.js",
+    "types": "dist/cjs/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/cjs/index.d.ts",
+            "require": "./dist/cjs/index.js",
+            "import": "./dist/esm/index.js"
+        }
+    },
     "files": [
         "dist/**/*",
         "README.md",
