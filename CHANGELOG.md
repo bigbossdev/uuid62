@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.3.0] - 2026-08-01
 
 - Added dual ESM/CommonJS build output (`dist/cjs`, `dist/esm`) with a matching `exports` map in `package.json` — both `require()` and `import` are now natively supported
 
