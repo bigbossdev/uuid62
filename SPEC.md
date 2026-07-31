@@ -93,11 +93,19 @@ const isValidBase62_2 = uuid62.isValidBase62('invalid@base62!');
 │   └── utils.ts      # 유틸리티 함수 (검증 등)
 ├── test/
 │   └── index.test.ts # Jest 테스트 파일
-├── dist/             # 컴파일된 JavaScript
-│   ├── index.js      # 컴파일된 메인 모듈
-│   ├── index.d.ts    # TypeScript 타입 정의
-│   ├── utils.js      # 컴파일된 유틸리티
-│   └── utils.d.ts    # 유틸리티 타입 정의
+├── dist/             # 컴파일된 JavaScript (듀얼 빌드)
+│   ├── cjs/          # CommonJS 빌드 (require)
+│   │   ├── index.js
+│   │   ├── index.d.ts
+│   │   ├── utils.js
+│   │   ├── utils.d.ts
+│   │   └── package.json  # { "type": "commonjs" }
+│   └── esm/          # ESM 빌드 (import)
+│       ├── index.js
+│       ├── index.d.ts
+│       ├── utils.js
+│       ├── utils.d.ts
+│       └── package.json  # { "type": "module" }
 ├── coverage/         # Jest 커버리지 리포트
 ├── package.json
 ├── tsconfig.json
@@ -110,9 +118,9 @@ const isValidBase62_2 = uuid62.isValidBase62('invalid@base62!');
 
 ### 빌드 및 배포 구조
 - **소스 코드**: `src/` 폴더의 TypeScript 파일
-- **빌드 결과**: `dist/` 폴더의 JavaScript + 타입 정의 파일
-- **메인 진입점**: `dist/index.js` (CommonJS)
-- **타입 정의**: `dist/index.d.ts` (TypeScript 지원)
+- **빌드 결과**: `dist/cjs/`(CommonJS), `dist/esm/`(ESM) 듀얼 빌드 + 타입 정의 파일
+- **메인 진입점**: `dist/cjs/index.js` (CommonJS, `package.json` `main`)
+- **타입 정의**: `dist/cjs/index.d.ts` (`package.json` `types`)
 - **테스트**: Jest를 통한 TypeScript 직접 실행
 
 ## 테스트 요구사항
@@ -129,16 +137,18 @@ const isValidBase62_2 = uuid62.isValidBase62('invalid@base62!');
 ## 빌드 및 배포 요구사항
 
 ### 빌드 시스템
-- **TypeScript 컴파일**: `tsc` 명령어로 단일 빌드
-- **출력 형식**: CommonJS (ES Module 지원 제외)
-- **타입 정의**: 자동 생성 (.d.ts 파일)
+- **TypeScript 컴파일**: `tsc` 명령어로 CJS/ESM 듀얼 빌드 (`tsconfig.cjs.json`, `tsconfig.esm.json` 두 번 컴파일)
+- **출력 형식**: CommonJS(`dist/cjs`)와 ES Module(`dist/esm`) 모두 지원
+- **타입 정의**: 자동 생성 (.d.ts 파일), 각 빌드 폴더에 포함
 - **소스맵**: 디버깅용 .js.map 파일 포함
+- **빌드 후처리**: `scripts/postbuild.js`가 각 폴더에 `package.json` 타입 마커를 쓰고 ESM 상대 import에 `.js` 확장자를 추가
+- **빌드 검증**: `scripts/verify-dual-build.js`가 두 빌드의 동작 일치 여부를 확인하고, 불일치 시 빌드를 실패시킴
 
 ### NPM 배포
 - **패키지명**: `@bboss/uuid62`
 - **라이선스**: MIT
-- **메인 파일**: `dist/index.js`
-- **타입 파일**: `dist/index.d.ts`
+- **메인 파일**: `dist/cjs/index.js` (`main`), `exports`로 `require`/`import` 조건부 라우팅
+- **타입 파일**: `dist/cjs/index.d.ts`
 - **Node.js 지원**: 16.0.0+ (crypto.randomUUID() 안정 지원)
 - **사용 방식**: `require('@bboss/uuid62')` 또는 `import` 모두 가능
 
