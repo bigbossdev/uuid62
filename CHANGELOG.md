@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Added dual ESM/CommonJS build output (`dist/cjs`, `dist/esm`) with a matching `exports` map in `package.json` — both `require()` and `import` are now natively supported
+
 ## [1.2.0] - 2025-10-27
 
 - Added `generateBase62()` function as an alias for `v4()`

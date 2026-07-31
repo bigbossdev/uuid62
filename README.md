@@ -28,8 +28,11 @@ yarn add @bboss/uuid62
 ## Usage
 
 ```javascript
+// ESM
 import uuid62 from '@bboss/uuid62';
-// const uuid62 = require('@bboss/uuid62'); // legacy way
+
+// CommonJS
+const uuid62 = require('@bboss/uuid62');
 
 // Generate a new Base62 UUID
 const shortId = uuid62.v4();
