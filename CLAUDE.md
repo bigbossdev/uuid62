@@ -23,9 +23,7 @@ Encoding is a straight base conversion: a UUID's 32 hex digits are parsed as a s
 
 `isValidUuid()` is intentionally *not* exported from `index.ts` (see CHANGELOG 1.2.0) — it's an internal-only check re-exported just within `utils.ts`. Keep this asymmetry in mind: `isValidBase62` is public, `isValidUuid` is not.
 
-Build output (`dist/`) targets CommonJS (`tsconfig.json`: `module: CommonJS`, `target: ES2020`) with declaration files and source maps; `dist/**/*` plus `README.md`/`LICENSE` are what actually ships (`package.json` `files`).
-
-Build output is dual-format: `tsc` compiles `src/` twice — `tsconfig.cjs.json` → `dist/cjs` (CommonJS), `tsconfig.esm.json` → `dist/esm` (ES modules). `scripts/postbuild.js` writes a `package.json` marker into each folder (`{"type":"commonjs"}` / `{"type":"module"}`) and rewrites `dist/esm`'s relative import specifiers to add the `.js` extension Node's ESM resolver requires but `tsc` doesn't emit. `package.json`'s `exports` field routes `require`/`import` to the matching folder; `main`/`types` still point at `dist/cjs` for tools that ignore `exports`. `scripts/verify-dual-build.js` runs as the final build step and fails the build if the two outputs' `encode`/`decode`/`v4` behavior diverges.
+Build output is dual-format: `tsc` compiles `src/` twice — `tsconfig.cjs.json` → `dist/cjs` (CommonJS), `tsconfig.esm.json` → `dist/esm` (ES modules), both with declaration files and source maps. `scripts/postbuild.js` writes a `package.json` marker into each folder (`{"type":"commonjs"}` / `{"type":"module"}`) and rewrites `dist/esm`'s relative import specifiers to add the `.js` extension Node's ESM resolver requires but `tsc` doesn't emit. `package.json`'s `exports` field routes `require`/`import` to the matching folder; `main`/`types` still point at `dist/cjs` for tools that ignore `exports`. `scripts/verify-dual-build.js` runs as the final build step and fails the build if the two outputs' `encode`/`decode`/`v4` behavior diverges. `dist/**/*` plus `README.md`/`LICENSE` are what actually ships (`package.json` `files`).
 
 ## Release flow
 
