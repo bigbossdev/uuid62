@@ -7,6 +7,7 @@ A lightweight TypeScript library for encoding and decoding UUIDs to/from Base62 
 - 🚀 **Fast & Lightweight**: Zero dependencies, optimized for performance
 - 🔒 **Node.js Only**: Built specifically for server-side applications
 - 📦 **TypeScript Native**: Full TypeScript support with type definitions
+- 🔀 **ESM + CommonJS**: Ships native builds for both `import` and `require()`
 - 🧪 **Well Tested**: Comprehensive test suite with high coverage
 - 🔧 **Simple API**: Easy-to-use functions for encoding, decoding, and validation
 
@@ -27,13 +28,21 @@ yarn add @bboss/uuid62
 
 ## Usage
 
+The package ships both an ES module build and a CommonJS build (since 1.3.0); Node picks the right one automatically. Both default and named imports are supported:
+
 ```javascript
-// ESM
+// ESM — default import
 import uuid62 from '@bboss/uuid62';
+
+// ESM — named imports
+import { encode, decode, v4, generateBase62, isValidBase62 } from '@bboss/uuid62';
 
 // CommonJS
 const uuid62 = require('@bboss/uuid62');
+const { encode, decode } = require('@bboss/uuid62');
+```
 
+```javascript
 // Generate a new Base62 UUID
 const shortId = uuid62.v4();
 console.log(shortId); // → "2fgT6HSnoa1fpeINbxJIo0" (random)
@@ -70,29 +79,31 @@ Generates a new UUID v4 using `crypto.randomUUID()` and encodes it to Base62 (al
 Encodes a standard UUID to Base62 format.
 
 **Parameters:**
-- `uuid` - Standard UUID string (with or without hyphens)
+- `uuid` - Standard UUID string (with or without hyphens, case-insensitive)
 
-**Returns:** Base62 encoded string
+**Returns:** Base62 encoded string, always exactly 22 characters (left-padded with `0`)
 
-**Throws:** Error if UUID format is invalid
+**Throws:** `Invalid UUID format` if the input is not a valid UUID
 
 ### `decode(base62: string): string`
 Decodes a Base62 string back to standard UUID format.
 
 **Parameters:**
-- `base62` - Base62 encoded string
+- `base62` - Base62 encoded string. Shorter-than-22-character input is accepted and treated as if left-padded with `0`.
 
-**Returns:** Standard UUID string with hyphens
+**Returns:** Standard UUID string in lowercase with hyphens
 
-**Throws:** Error if Base62 format is invalid
+**Throws:**
+- `Invalid Base62 format` if the input is empty or contains non-Base62 characters
+- `Invalid Base62 value: too large for UUID` if the decoded value exceeds 128 bits
 
 ### `isValidBase62(str: string): boolean`
-Validates if a string is a valid Base62 format.
+Checks whether a string consists only of Base62 characters (`0-9a-zA-Z`). It does **not** check length, so it does not guarantee the string is a decodable 22-character UUID.
 
 **Parameters:**
 - `str` - String to validate
 
-**Returns:** `true` if valid Base62, `false` otherwise
+**Returns:** `true` if non-empty and all characters are Base62, `false` otherwise
 
 ## Error Handling
 
@@ -115,6 +126,16 @@ try {
 ## Base62 Character Set
 
 Uses the following 62 characters: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
+
+## Development
+
+```bash
+yarn install
+yarn test     # run the Jest suite against TypeScript sources
+yarn build    # build dist/cjs + dist/esm and verify both outputs match
+```
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## License
 
