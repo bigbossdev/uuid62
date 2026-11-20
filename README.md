@@ -12,7 +12,7 @@ A lightweight TypeScript library for encoding and decoding UUIDs to/from Base62 
 - 🔒 **Node.js Only**: Built specifically for server-side applications
 - 📦 **TypeScript Native**: Full TypeScript support with type definitions
 - 🔀 **ESM + CommonJS**: Ships native builds for both `import` and `require()`
-- 🧪 **Well Tested**: Comprehensive test suite with high coverage
+- 🧪 **Well Tested**: Comprehensive test suite with 100% coverage enforced in CI
 - 🔧 **Simple API**: Easy-to-use functions for encoding, decoding, and validation
 
 ## Installation
@@ -27,8 +27,10 @@ yarn add @bboss/uuid62
 
 ## Requirements
 
-- Node.js 16.0.0 or higher (requires `crypto.randomUUID()`)
+- Node.js 16.0.0 or higher. `v4()` / `generateBase62()` use `crypto.randomUUID()`; `encode()` / `decode()` are pure `BigInt` arithmetic.
 - **Node.js only** - not compatible with browser environments
+
+The package checks its environment **when it is imported**: if a global `window` or `document` exists, the import throws `@bboss/uuid62 is Node.js only and cannot run in browser environments`. This also applies to browser-like environments running on Node, such as Jest with `testEnvironment: 'jsdom'` — use the `node` test environment (e.g. a `/** @jest-environment node */` docblock) for tests that import this package.
 
 ## Usage
 
@@ -83,7 +85,7 @@ Generates a new UUID v4 using `crypto.randomUUID()` and encodes it to Base62 (al
 Encodes a standard UUID to Base62 format.
 
 **Parameters:**
-- `uuid` - Standard UUID string (with or without hyphens, case-insensitive)
+- `uuid` - Standard UUID string (with or without hyphens, case-insensitive). Only the 8-4-4-4-12 hex format is checked — version and variant bits are not, so any UUID version (v1, v4, v7, …) or arbitrary 128-bit hex value in that shape is accepted.
 
 **Returns:** Base62 encoded string, always exactly 22 characters (left-padded with `0`)
 
@@ -125,19 +127,31 @@ try {
 } catch (error) {
     console.log(error.message); // → "Invalid Base62 format"
 }
+
+try {
+    uuid62.decode('zzzzzzzzzzzzzzzzzzzzzz'); // valid characters, but exceeds 128 bits
+} catch (error) {
+    console.log(error.message); // → "Invalid Base62 value: too large for UUID"
+}
 ```
 
 ## Base62 Character Set
 
 Uses the following 62 characters: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
+> **Sort order:** lowercase letters come *before* uppercase in this alphabet, which differs from ASCII/byte order (`0-9A-Za-z`). Sorting encoded strings with a plain string comparison therefore does **not** preserve the order of the original UUIDs — relevant if you rely on time-ordered UUIDs such as v7. Sort by the decoded UUID instead.
+
 ## Development
 
 ```bash
 yarn install
-yarn test     # run the Jest suite against TypeScript sources
-yarn build    # build dist/cjs + dist/esm and verify both outputs match
+yarn typecheck      # type-check src/ and test/ (no emit)
+yarn test           # run the Jest suite against TypeScript sources
+yarn test:coverage  # run tests with coverage (fails below 100%)
+yarn build          # build dist/cjs + dist/esm and verify both outputs match
 ```
+
+If `yarn` is not on your `PATH`, run it through Corepack (e.g. `corepack yarn test`).
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
