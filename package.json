@@ -1,6 +1,6 @@
 {
     "name": "@bboss/uuid62",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "UUID to Base62 encoding/decoding library for Node.js",
     "keywords": [
         "uuid",
