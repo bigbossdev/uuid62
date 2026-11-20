@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [1.4.0] - 2026-11-21
+## [1.3.1] - 2026-11-21
 
 ### Packaging
 - `exports` now declares per-condition `types`: `import` resolves `dist/esm/index.d.ts`, `require` resolves `dist/cjs/index.d.ts`
