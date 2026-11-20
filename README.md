@@ -144,14 +144,12 @@ Uses the following 62 characters: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHI
 ## Development
 
 ```bash
-yarn install
-yarn typecheck      # type-check src/ and test/ (no emit)
-yarn test           # run the Jest suite against TypeScript sources
-yarn test:coverage  # run tests with coverage (fails below 100%)
-yarn build          # build dist/cjs + dist/esm and verify both outputs match
+npm install
+npm run typecheck      # type-check src/ and test/ (no emit)
+npm test               # run the Jest suite against TypeScript sources
+npm run test:coverage  # run tests with coverage (fails below 100%)
+npm run build          # build dist/cjs + dist/esm and verify both outputs match
 ```
-
-If `yarn` is not on your `PATH`, run it through Corepack (e.g. `corepack yarn test`).
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 

@@ -4,16 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-- `yarn build` — clean `dist/`, compile CommonJS to `dist/cjs` and ESM to `dist/esm` (two `tsc` passes via `tsconfig.cjs.json`/`tsconfig.esm.json`), then post-process (`scripts/postbuild.js`) and verify parity between the two outputs (`scripts/verify-dual-build.js`)
-- `yarn test` — run the Jest test suite
-- `yarn test:watch` — run tests in watch mode
-- `yarn test:coverage` — run tests with coverage report (output to `coverage/`); fails below 100% statements/branches/functions/lines (`coverageThreshold` in `jest.config.js`)
-- `yarn typecheck` — `tsc -p tsconfig.json` (no emit) over `src/` + `test/`
-- Run a single test: `yarn test -t "test name substring"` (matches Jest's `-t` filter against `test()`/`describe()` names)
+- `npm run build` — clean `dist/`, compile CommonJS to `dist/cjs` and ESM to `dist/esm` (two `tsc` passes via `tsconfig.cjs.json`/`tsconfig.esm.json`), then post-process (`scripts/postbuild.js`) and verify parity between the two outputs (`scripts/verify-dual-build.js`)
+- `npm test` — run the Jest test suite
+- `npm run test:watch` — run tests in watch mode
+- `npm run test:coverage` — run tests with coverage report (output to `coverage/`); fails below 100% statements/branches/functions/lines (`coverageThreshold` in `jest.config.js`)
+- `npm run typecheck` — `tsc -p tsconfig.json` (no emit) over `src/` + `test/`
+- Run a single test: `npm test -- -t "test name substring"` (matches Jest's `-t` filter against `test()`/`describe()` names)
 
-Package manager is Yarn (Berry, `yarn@4.18.1` via `.yarnrc.yml` / `.yarn/`). If `yarn` isn't on PATH (e.g. in the Bash/PowerShell tool shells), prefix with `corepack`: `corepack yarn test`, `corepack yarn build`. Tests live in `test/index.test.ts` and run directly against TypeScript sources via `ts-jest`; no build step is needed to run tests.
+Package manager is npm (lockfile `package-lock.json`; switched from Yarn Berry — don't reintroduce `yarn.lock`/`.yarn/`). Tests live in `test/index.test.ts` and run directly against TypeScript sources via `ts-jest`; no build step is needed to run tests.
 
-CI (`.github/workflows/ci.yml`) runs on every PR and push to `main`: `yarn typecheck`, `yarn test:coverage`, `yarn build`, `@arethetypeswrong/cli --pack .`, then re-runs `scripts/verify-dual-build.js` against the built `dist/` on Node 16/18/20/22/24 (the `engines` range — dev tooling itself needs a newer Node, so only the built output is exercised on old versions). `main` is branch-protected; changes go through feature branches + PRs.
+CI (`.github/workflows/ci.yml`) runs on every PR and push to `main`: `npm run typecheck`, `npm run test:coverage`, `npm run build`, `@arethetypeswrong/cli --pack .`, then re-runs `scripts/verify-dual-build.js` against the built `dist/` on Node 16/18/20/22/24 (the `engines` range — dev tooling itself needs a newer Node, so only the built output is exercised on old versions). `main` is branch-protected; changes go through feature branches + PRs.
 
 **Always create a feature branch (`git checkout -b <type>/<topic>`, e.g. `feat/...`, `fix/...`, `docs/...`) before making any change to tracked files** — never edit on `main`. Use a plain branch in the main checkout, not `git worktree`.
 
@@ -37,7 +37,7 @@ Behavioral quirks (existing public behavior — changing any of these is a break
 
 Build output is dual-format: `tsc` compiles `src/` twice — `tsconfig.cjs.json` → `dist/cjs` (CommonJS), `tsconfig.esm.json` → `dist/esm` (ES modules), both with declaration files and source maps. `scripts/postbuild.js` writes a `package.json` marker into each folder (`{"type":"commonjs"}` / `{"type":"module"}`) and rewrites relative import specifiers in `dist/esm`'s `.js` **and `.d.ts`** files to add the `.js` extension Node's ESM resolver (and TS `node16`/`nodenext`) requires but `tsc` doesn't emit. `package.json`'s `exports` field routes `require`/`import` — each with its own `types` — to the matching folder; `main`/`types` still point at `dist/cjs` for tools that ignore `exports`. `scripts/verify-dual-build.js` runs as the final build step and fails the build if the two outputs' `encode`/`decode`/`v4` behavior diverges, an ESM `.d.ts` has an extensionless relative import, or a source map references a file outside the shipped `src/**/*.ts`. `dist/**/*`, `src/**/*.ts` (so source maps and declaration maps resolve), and `README.md`/`LICENSE` are what actually ships (`package.json` `files`).
 
-TS config layout: shared compiler options live in `tsconfig.base.json`; `tsconfig.cjs.json`/`tsconfig.esm.json` only set `module` + `outDir`. The root `tsconfig.json` is *not* used by the build (it's `noEmit`, covers `src/` + `test/`, for editors/ts-jest; typecheck with `yarn typecheck`) — change `tsconfig.base.json` for compiler-option changes. TypeScript is on 6.x: `types` must be listed explicitly (`["node"]` in base, plus `"jest"` in `tsconfig.json` for ts-jest) and `moduleResolution` is `bundler` (`node`/`node10` errors in TS 6). Don't bump to TypeScript 7 until ts-jest supports it (its peer range is `<7`).
+TS config layout: shared compiler options live in `tsconfig.base.json`; `tsconfig.cjs.json`/`tsconfig.esm.json` only set `module` + `outDir`. The root `tsconfig.json` is *not* used by the build (it's `noEmit`, covers `src/` + `test/`, for editors/ts-jest; typecheck with `npm run typecheck`) — change `tsconfig.base.json` for compiler-option changes. TypeScript is on 6.x: `types` must be listed explicitly (`["node"]` in base, plus `"jest"` in `tsconfig.json` for ts-jest) and `moduleResolution` is `bundler` (`node`/`node10` errors in TS 6). Don't bump to TypeScript 7 until ts-jest supports it (its peer range is `<7`).
 
 ## Working files
 
@@ -45,6 +45,6 @@ Superpowers skill outputs (design specs, implementation plans, etc.) go under `.
 
 ## Release flow
 
-Publishing is tag-triggered: pushing a `v*` tag runs `.github/workflows/publish.yml`, which installs via `yarn install --immutable`, runs `yarn test`, `yarn build` (which includes dual-build verification), then `npm publish --access=public` (`prepublishOnly` rebuilds once more). Bump `version` in `package.json` and update `CHANGELOG.md` before tagging a release. `npm publish` authenticates via npm trusted publishing (GitHub OIDC, hence `id-token: write` and no `NODE_AUTH_TOKEN`), which also attaches SLSA provenance automatically — no `--provenance` flag needed.
+Publishing is tag-triggered: pushing a `v*` tag runs `.github/workflows/publish.yml`, which installs via `npm ci`, runs `npm test`, `npm run build` (which includes dual-build verification), then `npm publish --access=public` (`prepublishOnly` rebuilds once more). Bump `version` in `package.json` and update `CHANGELOG.md` before tagging a release. `npm publish` authenticates via npm trusted publishing (GitHub OIDC, hence `id-token: write` and no `NODE_AUTH_TOKEN`), which also attaches SLSA provenance automatically — no `--provenance` flag needed.
 
 Dependabot (`.github/dependabot.yml`) opens weekly PRs for npm devDependencies and GitHub Actions. TypeScript and `@types/node` majors are ignored on purpose (see TS 7 note above) — upgrade those manually.

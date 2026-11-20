@@ -5,6 +5,9 @@
 ### Documentation
 - README: documented the import-time browser check (including Jest `jsdom`), that `encode` accepts any UUID version, the non-ASCII sort order of the Base62 alphabet, the "too large" decode error, and the `typecheck`/`test:coverage` scripts
 
+### Internal
+- Switched the development package manager from Yarn (Berry) to npm: `package-lock.json` replaces `yarn.lock`/`.yarn/`, CI and publish workflows use `npm ci`/`npm run`. No change for package consumers.
+
 ## [1.3.1] - 2026-11-21
 
 ### Packaging
