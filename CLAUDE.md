@@ -14,6 +14,8 @@ Package manager is Yarn (Berry, `yarn@4.10.3` via `.yarnrc.yml` / `.yarn/`). If 
 
 There is no PR CI — the only workflow is the tag-triggered publish. Run `yarn test` and `yarn build` locally before opening a PR. `main` is branch-protected; changes go through feature branches + PRs.
 
+**Always create a feature branch (`git checkout -b <type>/<topic>`, e.g. `feat/...`, `fix/...`, `docs/...`) before making any change to tracked files** — never edit on `main`. Use a plain branch in the main checkout, not `git worktree`.
+
 ## Architecture
 
 Two-file source layout:
