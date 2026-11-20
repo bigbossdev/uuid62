@@ -16,7 +16,6 @@ package-lock.json
 
 # Build outputs
 dist/
-dist-esm/
 *.tsbuildinfo
 
 # Environment variables
@@ -46,7 +45,6 @@ coverage/
 
 # Jest
 .nyc_output
-jest.config.js.map
 
 # Temporary folders
 tmp/

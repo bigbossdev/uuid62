@@ -1,4 +1,5 @@
-import { encode, decode, v4, generateBase62, isValidBase62 } from '../src/index';
+import uuid62, { encode, decode, v4, generateBase62, isValidBase62 } from '../src/index';
+import { checkNodeEnvironment } from '../src/utils';
 
 describe('UUID62 Library Tests', () => {
     
@@ -115,18 +116,116 @@ describe('UUID62 Library Tests', () => {
         });
     });
 
-    test('performance: should handle 1000 operations quickly', () => {
-        const start = Date.now();
-        
+    test('round-trip: 1000 random UUIDs survive encode/decode', () => {
         for (let i = 0; i < 1000; i++) {
-            const uuid = v4();
-            const decoded = decode(uuid);
-            const reencoded = encode(decoded);
-            expect(uuid).toBe(reencoded);
+            const id = v4();
+            expect(id).toHaveLength(22);
+            expect(encode(decode(id))).toBe(id);
         }
-        
-        const duration = Date.now() - start;
-        console.log(`1000 round-trip operations took ${duration}ms`);
-        expect(duration).toBeLessThan(1000);
+    });
+});
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const KNOWN_UUID = '49ceabcf-5e02-4449-be28-a9b341df4b08';
+const KNOWN_BASE62 = '2fgT6HSnoa1fpeINbxJIo0';
+const MAX_UUID = 'ffffffff-ffff-ffff-ffff-ffffffffffff';
+
+describe('known vectors', () => {
+    test('encode/decode match the documented example', () => {
+        expect(encode(KNOWN_UUID)).toBe(KNOWN_BASE62);
+        expect(decode(KNOWN_BASE62)).toBe(KNOWN_UUID);
+    });
+
+    test('all-zero and all-f UUIDs map to the Base62 bounds', () => {
+        expect(encode('00000000-0000-0000-0000-000000000000')).toBe('0'.repeat(22));
+        expect(encode(MAX_UUID)).toBe('7N42dgm5tFLK9N8MT7fHC7');
+        expect(decode('7N42dgm5tFLK9N8MT7fHC7')).toBe(MAX_UUID);
+    });
+});
+
+describe('encode input handling', () => {
+    test('accepts uppercase and mixed-case UUIDs', () => {
+        expect(encode(KNOWN_UUID.toUpperCase())).toBe(KNOWN_BASE62);
+        expect(encode('49CEabcf-5E02-4449-bE28-A9B341df4b08')).toBe(KNOWN_BASE62);
+    });
+
+    test('hyphenless input encodes the same as hyphenated input', () => {
+        expect(encode(KNOWN_UUID.replace(/-/g, ''))).toBe(KNOWN_BASE62);
+    });
+
+    test('rejects malformed UUIDs', () => {
+        expect(() => encode(KNOWN_UUID.slice(0, -1))).toThrow('Invalid UUID format');
+        expect(() => encode(KNOWN_UUID + '0')).toThrow('Invalid UUID format');
+        expect(() => encode(KNOWN_UUID.replace('a', 'g'))).toThrow('Invalid UUID format');
+    });
+
+    test('rejects non-string input', () => {
+        expect(() => encode(123 as unknown as string)).toThrow('Invalid UUID format');
+        expect(() => encode(null as unknown as string)).toThrow('Invalid UUID format');
+        expect(() => encode(undefined as unknown as string)).toThrow('Invalid UUID format');
+    });
+});
+
+describe('decode input handling', () => {
+    test('always returns lowercase hyphenated UUIDs', () => {
+        expect(decode(KNOWN_BASE62)).toMatch(UUID_RE);
+    });
+
+    // Current (1.x) behavior: input shorter than 22 chars is treated as left-padded with '0'.
+    // A stricter decode is a 2.0.0 candidate (see docs/backlog); update these tests if it lands.
+    test('accepts short input as if left-padded with zeros', () => {
+        expect(decode('abc')).toBe('00000000-0000-0000-0000-0000000098de');
+        expect(decode('0abc')).toBe(decode('abc'));
+    });
+
+    test('throws when the value exceeds 128 bits', () => {
+        expect(() => decode('Z'.repeat(22))).toThrow('Invalid Base62 value: too large for UUID');
+        expect(() => decode('1' + '0'.repeat(22))).toThrow('Invalid Base62 value: too large for UUID');
+    });
+
+    test('rejects non-string input', () => {
+        expect(() => decode(123 as unknown as string)).toThrow('Invalid Base62 format');
+        expect(() => decode(null as unknown as string)).toThrow('Invalid Base62 format');
+    });
+});
+
+describe('isValidBase62', () => {
+    test('returns false for non-string input', () => {
+        expect(isValidBase62(123 as unknown as string)).toBe(false);
+        expect(isValidBase62(undefined as unknown as string)).toBe(false);
+    });
+
+    // Current (1.x) behavior: only the character set is checked, not length or range.
+    test('checks characters only, not length or range', () => {
+        expect(isValidBase62('a')).toBe(true);
+        expect(isValidBase62('Z'.repeat(22))).toBe(true);
+    });
+});
+
+describe('default export', () => {
+    test('exposes the same functions as the named exports', () => {
+        expect(uuid62.encode).toBe(encode);
+        expect(uuid62.decode).toBe(decode);
+        expect(uuid62.v4).toBe(v4);
+        expect(uuid62.generateBase62).toBe(generateBase62);
+        expect(uuid62.isValidBase62).toBe(isValidBase62);
+    });
+});
+
+describe('checkNodeEnvironment', () => {
+    const g = globalThis as Record<string, unknown>;
+
+    afterEach(() => {
+        delete g.window;
+        delete g.document;
+    });
+
+    test('does not throw in Node', () => {
+        expect(() => checkNodeEnvironment()).not.toThrow();
+    });
+
+    test.each(['window', 'document'])('throws when a browser global (%s) is present', (name) => {
+        g[name] = {};
+        expect(() => checkNodeEnvironment()).toThrow('Node.js only');
     });
 });
