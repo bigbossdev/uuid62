@@ -19,19 +19,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npm ci
 
       - name: Typecheck
-        run: yarn typecheck
+        run: npm run typecheck
 
       - name: Run tests (100% coverage threshold)
-        run: yarn test:coverage
+        run: npm run test:coverage
 
       - name: Build (includes dual-build verification)
-        run: yarn build
+        run: npm run build
 
       - name: Check published types (arethetypeswrong)
         run: npx --yes @arethetypeswrong/cli@0.18.5 --pack .
