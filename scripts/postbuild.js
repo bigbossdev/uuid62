@@ -18,7 +18,7 @@ fs.writeFileSync(
 const RELATIVE_IMPORT_RE = /from\s+(['"])(\.\.?\/[^'"]+)\1/g;
 
 for (const file of fs.readdirSync(esmDir)) {
-    if (!file.endsWith('.js')) continue;
+    if (!file.endsWith('.js') && !file.endsWith('.d.ts')) continue;
 
     const filePath = path.join(esmDir, file);
     const content = fs.readFileSync(filePath, 'utf8');
@@ -33,4 +33,4 @@ for (const file of fs.readdirSync(esmDir)) {
     }
 }
 
-console.log('postbuild: wrote dist/cjs/package.json, dist/esm/package.json, fixed ESM relative import extensions');
+console.log('postbuild: wrote dist/cjs/package.json, dist/esm/package.json, fixed ESM relative import extensions (.js, .d.ts)');
