@@ -45,4 +45,6 @@ Superpowers skill outputs (design specs, implementation plans, etc.) go under `.
 
 ## Release flow
 
-Publishing is tag-triggered: pushing a `v*` tag runs `.github/workflows/publish.yml`, which installs via `yarn install --immutable`, runs `yarn test`, `yarn build` (which includes dual-build verification), then `npm publish --access=public` (`prepublishOnly` rebuilds once more). Bump `version` in `package.json` and update `CHANGELOG.md` before tagging a release.
+Publishing is tag-triggered: pushing a `v*` tag runs `.github/workflows/publish.yml`, which installs via `yarn install --immutable`, runs `yarn test`, `yarn build` (which includes dual-build verification), then `npm publish --access=public` (`prepublishOnly` rebuilds once more). Bump `version` in `package.json` and update `CHANGELOG.md` before tagging a release. `npm publish` authenticates via npm trusted publishing (GitHub OIDC, hence `id-token: write` and no `NODE_AUTH_TOKEN`), which also attaches SLSA provenance automatically — no `--provenance` flag needed.
+
+Dependabot (`.github/dependabot.yml`) opens weekly PRs for npm devDependencies and GitHub Actions. TypeScript and `@types/node` majors are ignored on purpose (see TS 7 note above) — upgrade those manually.
