@@ -17,6 +17,8 @@ CI (`.github/workflows/ci.yml`) runs on every PR and push to `main`: `yarn typec
 
 **Always create a feature branch (`git checkout -b <type>/<topic>`, e.g. `feat/...`, `fix/...`, `docs/...`) before making any change to tracked files** — never edit on `main`. Use a plain branch in the main checkout, not `git worktree`.
 
+Record notable changes under `## [Unreleased]` in `CHANGELOG.md` in the same PR; at release time, rename that section to the new version and date.
+
 ## Architecture
 
 Two-file source layout:
