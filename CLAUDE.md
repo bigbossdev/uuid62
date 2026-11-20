@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `yarn test:coverage` — run tests with coverage report (output to `coverage/`)
 - Run a single test: `yarn test -t "test name substring"` (matches Jest's `-t` filter against `test()`/`describe()` names)
 
-Package manager is Yarn (Berry, `yarn@4.10.3` via `.yarnrc.yml` / `.yarn/`). If `yarn` isn't on PATH (e.g. in the Bash/PowerShell tool shells), prefix with `corepack`: `corepack yarn test`, `corepack yarn build`. Tests live in `test/index.test.ts` and run directly against TypeScript sources via `ts-jest`; no build step is needed to run tests.
+Package manager is Yarn (Berry, `yarn@4.18.1` via `.yarnrc.yml` / `.yarn/`). If `yarn` isn't on PATH (e.g. in the Bash/PowerShell tool shells), prefix with `corepack`: `corepack yarn test`, `corepack yarn build`. Tests live in `test/index.test.ts` and run directly against TypeScript sources via `ts-jest`; no build step is needed to run tests.
 
 There is no PR CI — the only workflow is the tag-triggered publish. Run `yarn test` and `yarn build` locally before opening a PR. `main` is branch-protected; changes go through feature branches + PRs.
 
@@ -34,7 +34,7 @@ Behavioral quirks (existing public behavior — changing any of these is a break
 
 Build output is dual-format: `tsc` compiles `src/` twice — `tsconfig.cjs.json` → `dist/cjs` (CommonJS), `tsconfig.esm.json` → `dist/esm` (ES modules), both with declaration files and source maps. `scripts/postbuild.js` writes a `package.json` marker into each folder (`{"type":"commonjs"}` / `{"type":"module"}`) and rewrites `dist/esm`'s relative import specifiers to add the `.js` extension Node's ESM resolver requires but `tsc` doesn't emit. `package.json`'s `exports` field routes `require`/`import` to the matching folder; `main`/`types` still point at `dist/cjs` for tools that ignore `exports`. `scripts/verify-dual-build.js` runs as the final build step and fails the build if the two outputs' `encode`/`decode`/`v4` behavior diverges. `dist/**/*` plus `README.md`/`LICENSE` are what actually ships (`package.json` `files`).
 
-TS config layout: shared compiler options live in `tsconfig.base.json`; `tsconfig.cjs.json`/`tsconfig.esm.json` only set `module` + `outDir`. The root `tsconfig.json` is *not* used by the build (it's for editors/ts-jest) — change `tsconfig.base.json` for compiler-option changes. `exports["."].types` points at the CJS `.d.ts` for both `import` and `require`.
+TS config layout: shared compiler options live in `tsconfig.base.json`; `tsconfig.cjs.json`/`tsconfig.esm.json` only set `module` + `outDir`. The root `tsconfig.json` is *not* used by the build (it's for editors/ts-jest) — change `tsconfig.base.json` for compiler-option changes. TypeScript is on 6.x: `types` must be listed explicitly (`["node"]` in base, plus `"jest"` in `tsconfig.json` for ts-jest) and `moduleResolution` is `bundler` (`node`/`node10` errors in TS 6). Don't bump to TypeScript 7 until ts-jest supports it (its peer range is `<7`). `exports["."].types` points at the CJS `.d.ts` for both `import` and `require`.
 
 ## Working files
 
