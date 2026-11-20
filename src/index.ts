@@ -20,13 +20,9 @@ export function encode(uuid: string): string {
     }
 
     const normalized = normalizeUuid(uuid);
-    const hex = BigInt('0x' + normalized);
-    
-    if (hex === 0n) return '0'.padStart(22, '0');
-    
+    let num = BigInt('0x' + normalized);
     let result = '';
-    let num = hex;
-    
+
     while (num > 0n) {
         result = BASE62_CHARS[Number(num % 62n)] + result;
         num = num / 62n;
@@ -45,16 +41,12 @@ export function decode(base62: string): string {
     
     let num = 0n;
     
-    for (let i = 0; i < base62.length; i++) {
-        const char = base62[i];
-        const index = BASE62_CHARS.indexOf(char);
-        if (index === -1) {
-            throw new Error('Invalid Base62 character');
-        }
-        num = num * 62n + BigInt(index);
+    // isValidBase62 guarantees every character is in BASE62_CHARS
+    for (const char of base62) {
+        num = num * 62n + BigInt(BASE62_CHARS.indexOf(char));
     }
-    
-    let hex = num.toString(16).padStart(32, '0');
+
+    const hex = num.toString(16).padStart(32, '0');
     
     if (hex.length > 32) {
         throw new Error('Invalid Base62 value: too large for UUID');
