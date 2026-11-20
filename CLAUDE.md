@@ -48,3 +48,5 @@ Superpowers skill outputs (design specs, implementation plans, etc.) go under `.
 Publishing is tag-triggered: pushing a `v*` tag runs `.github/workflows/publish.yml`, which installs via `npm ci`, runs `npm test`, `npm run build` (which includes dual-build verification), then `npm publish --access=public` (`prepublishOnly` rebuilds once more). Bump `version` in `package.json` and update `CHANGELOG.md` before tagging a release. `npm publish` authenticates via npm trusted publishing (GitHub OIDC, hence `id-token: write` and no `NODE_AUTH_TOKEN`), which also attaches SLSA provenance automatically — no `--provenance` flag needed.
 
 Dependabot (`.github/dependabot.yml`) opens weekly PRs for npm devDependencies and GitHub Actions. TypeScript and `@types/node` majors are ignored on purpose (see TS 7 note above) — upgrade those manually.
+
+`package.json` `overrides` force `glob@^14.0.6` / `minimatch@^11.0.9` to clear `npm audit` advisories in Jest's transitive deps (Jest 30.5 / `test-exclude` 7 still pull vulnerable ranges). When Jest/`test-exclude` depend on fixed versions themselves, drop the overrides and confirm `npm audit` stays clean.

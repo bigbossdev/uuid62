@@ -7,6 +7,7 @@
 
 ### Internal
 - Switched the development package manager from Yarn (Berry) to npm: `package-lock.json` replaces `yarn.lock`/`.yarn/`, CI and publish workflows use `npm ci`/`npm run`. No change for package consumers.
+- Resolved `npm audit` advisories in dev-only transitive dependencies of Jest (`glob` <14.0.2, `minimatch` <11.0.1) via `overrides` in `package.json`
 
 ## [1.3.1] - 2026-11-21
 
