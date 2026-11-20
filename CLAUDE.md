@@ -34,7 +34,9 @@ Build output is dual-format: `tsc` compiles `src/` twice — `tsconfig.cjs.json`
 
 TS config layout: shared compiler options live in `tsconfig.base.json`; `tsconfig.cjs.json`/`tsconfig.esm.json` only set `module` + `outDir`. The root `tsconfig.json` is *not* used by the build (it's for editors/ts-jest) — change `tsconfig.base.json` for compiler-option changes. `exports["."].types` points at the CJS `.d.ts` for both `import` and `require`.
 
-Design spec and implementation plan for the dual build are in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
+## Working files
+
+Superpowers skill outputs (design specs, implementation plans, etc.) go under `.superpowers/` (e.g. `.superpowers/specs/`, `.superpowers/plans/`), **not** `docs/superpowers/`. `.superpowers/` is gitignored — never commit these files.
 
 ## Release flow
 

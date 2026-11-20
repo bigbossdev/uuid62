@@ -51,3 +51,5 @@ jest.config.js.map
 # Temporary folders
 tmp/
 temp/
+# Superpowers skill outputs (specs, plans, etc.)
+.superpowers/
