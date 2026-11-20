@@ -1,4 +1,5 @@
 const assert = require('assert');
+const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
@@ -34,6 +35,29 @@ async function main() {
     assert.strictEqual(cjs.default.encode(KNOWN_UUID), KNOWN_BASE62, 'cjs default.encode() mismatch');
     assert.strictEqual(esm.default.encode(KNOWN_UUID), KNOWN_BASE62, 'esm default.encode() mismatch');
     assert.strictEqual(cjs.default.encode(KNOWN_UUID), esm.default.encode(KNOWN_UUID), 'cjs/esm default.encode() diverge');
+
+    // ESM declaration files must use explicit .js extensions for node16/nodenext resolution
+    const esmDir = path.join(__dirname, '..', 'dist', 'esm');
+    for (const file of fs.readdirSync(esmDir).filter((f) => f.endsWith('.d.ts'))) {
+        const content = fs.readFileSync(path.join(esmDir, file), 'utf8');
+        for (const [, specifier] of content.matchAll(/from\s+['"](\.\.?\/[^'"]+)['"]/g)) {
+            assert.ok(specifier.endsWith('.js'), `dist/esm/${file}: relative import '${specifier}' lacks .js extension`);
+        }
+    }
+
+    // Every source referenced by a shipped source map must be a shipped file (package.json "files")
+    const root = path.join(__dirname, '..');
+    for (const format of ['cjs', 'esm']) {
+        const dir = path.join(root, 'dist', format);
+        for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.map'))) {
+            const map = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'));
+            for (const source of map.sources) {
+                const resolved = path.relative(root, path.resolve(dir, map.sourceRoot || '', source)).split(path.sep).join('/');
+                assert.ok(fs.existsSync(path.join(root, resolved)), `dist/${format}/${file}: source '${resolved}' does not exist`);
+                assert.ok(resolved.startsWith('src/') && resolved.endsWith('.ts'), `dist/${format}/${file}: source '${resolved}' is not under shipped src/**/*.ts`);
+            }
+        }
+    }
 
     console.log('verify-dual-build: cjs and esm builds match');
 }
