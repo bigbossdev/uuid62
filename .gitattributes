@@ -1,0 +1,6 @@
+# Normalize line endings to LF in the repo and working tree
+* text=auto eol=lf
+
+# Yarn Berry: vendored release/plugins are generated — hide from diffs and language stats
+/.yarn/releases/** -diff linguist-generated
+/.yarn/plugins/** -diff linguist-generated

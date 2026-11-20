@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+### Packaging
+- `exports` now declares per-condition `types`: `import` resolves `dist/esm/index.d.ts`, `require` resolves `dist/cjs/index.d.ts`
+- ESM declaration files use explicit `.js` extensions for relative imports (`node16`/`nodenext` resolution)
+- TypeScript sources (`src/**/*.ts`) are now published so source maps and declaration maps resolve
+
+### Internal
+- Added PR CI: tests, build, `@arethetypeswrong/cli`, and a runtime smoke test of the built output on Node 16/18/20/22/24
+- Publish workflow runs an explicit build step
+- Expanded test suite (edge cases, 100% coverage threshold); removed unreachable code in `decode`/`encode` (no behavior change)
+- Updated dev dependencies: Jest 30, TypeScript 6, Yarn 4.18.1
+- Added `.gitattributes` (LF line endings)
+
 ## [1.3.0] - 2026-08-01
 
 - Added dual ESM/CommonJS build output (`dist/cjs`, `dist/esm`) with a matching `exports` map in `package.json` — both `require()` and `import` are now natively supported
