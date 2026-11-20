@@ -7,20 +7,20 @@
 
 ## 요약
 
-| # | 항목 | 우선순위 | 호환성 |
-|---|---|---|---|
-| 1 | `decode`가 비정규(non-canonical) 입력을 허용 | P1 | 🔴 |
-| 2 | `isValidBase62`가 "디코딩 가능한 UUID62"를 보장하지 않음 | P1 | 🟡 |
-| 3 | 배포 소스맵이 포함되지 않은 `src/`를 가리킴 | P1 | 🟢 |
-| 4 | PR용 CI 없음 / 지원 Node 버전 미검증 | P1 | 🟢 |
-| 5 | ESM 타입 해석 점검 (`types`가 CJS `.d.ts` 하나만 가리킴) | P2 | 🟢 |
-| 6 | 테스트 커버리지 공백 & 시간 의존 테스트 | P2 | 🟢 |
-| 7 | 모듈 로드 시 브라우저 감지 throw | P2 | 🟡 |
-| 8 | `engines.node >=16` 재검토 | P2 | 🔴 |
-| 9 | 줄바꿈(CRLF/LF) 정책 부재 — `.gitattributes` | P3 | 🟢 |
-| 10 | 의존성 자동 업데이트(Dependabot/Renovate) | P3 | 🟢 |
-| 11 | 사소한 코드 정리 | P3 | 🟢 |
-| 12 | CHANGELOG `Unreleased` 섹션 운영 | P3 | 🟢 |
+| # | 항목 | 우선순위 | 호환성 | 상태 |
+|---|---|---|---|---|
+| 1 | `decode`가 비정규(non-canonical) 입력을 허용 | P1 | 🔴 | ⬜ |
+| 2 | `isValidBase62`가 "디코딩 가능한 UUID62"를 보장하지 않음 | P1 | 🟡 | ⬜ |
+| 3 | 배포 소스맵이 포함되지 않은 `src/`를 가리킴 | P1 | 🟢 | ✅ #17 |
+| 4 | PR용 CI 없음 / 지원 Node 버전 미검증 | P1 | 🟢 | ✅ #17 |
+| 5 | ESM 타입 해석 점검 (`types`가 CJS `.d.ts` 하나만 가리킴) | P2 | 🟢 | ✅ #17 |
+| 6 | 테스트 커버리지 공백 & 시간 의존 테스트 | P2 | 🟢 | ✅ #16 |
+| 7 | 모듈 로드 시 브라우저 감지 throw | P2 | 🟡 | ⬜ |
+| 8 | `engines.node >=16` 재검토 | P2 | 🔴 | ⬜ |
+| 9 | 줄바꿈(CRLF/LF) 정책 부재 — `.gitattributes` | P3 | 🟢 | ✅ #18 |
+| 10 | 의존성 자동 업데이트(Dependabot/Renovate) | P3 | 🟢 | ✅ #19 |
+| 11 | 사소한 코드 정리 | P3 | 🟢 | ✅ #16 |
+| 12 | CHANGELOG `Unreleased` 섹션 운영 | P3 | 🟢 | ✅ #18 |
 
 ---
 
@@ -45,7 +45,7 @@
 **제안**
 - 22자 + 최대값(`encode('ffffffff-ffff-ffff-ffff-ffffffffffff')`) 이하 검사를 하는 `isValidUuid62()`(가칭)를 추가하거나, #1과 함께 major에서 `isValidBase62` 의미를 강화.
 
-## 3. 배포 소스맵이 존재하지 않는 `src/`를 가리킴 — P1 🟢
+## 3. 배포 소스맵이 존재하지 않는 `src/`를 가리킴 — P1 🟢 — ✅ #17
 
 **근거**
 - `dist/cjs/index.js.map`의 `"sources": ["../../src/index.ts"]`, `sourcesContent` 없음.
@@ -57,7 +57,7 @@
 - `files`에 `src/**/*.ts` 포함(declarationMap도 살아남), 또는
 - 소스맵/declarationMap 미배포.
 
-## 4. PR용 CI 없음 / 지원 Node 버전 미검증 — P1 🟢
+## 4. PR용 CI 없음 / 지원 Node 버전 미검증 — P1 🟢 — ✅ #17
 
 **근거**
 - 워크플로는 `publish.yml`(태그 트리거) 하나뿐. PR에서 test/build가 자동으로 돌지 않음.
@@ -69,7 +69,7 @@
 - 런타임 호환 검증: 빌드 산출물(`dist`)을 대상으로 지원 Node 버전 매트릭스에서 스모크 테스트(`scripts/verify-dual-build.js` 재사용). 개발 도구(jest 30, rimraf 6.1)는 Node 18/20+를 요구하므로 테스트 자체를 Node 16에서 돌릴 수는 없음 → 빌드는 최신 LTS, 검증만 매트릭스.
 - `publish.yml`에 `yarn build` 단계 명시.
 
-## 5. ESM 타입 해석 점검 — P2 🟢
+## 5. ESM 타입 해석 점검 — P2 🟢 — ✅ #17
 
 **근거**
 - `exports["."].types`가 `import`/`require` 모두 `dist/cjs/index.d.ts`를 가리킴. `dist/esm/*.d.ts`는 배포되지만 사용되지 않음.
@@ -86,7 +86,7 @@
   ```
 - `attw --pack .`를 CI(#4)에 추가.
 
-## 6. 테스트 공백 & 시간 의존 테스트 — P2 🟢
+## 6. 테스트 공백 & 시간 의존 테스트 — P2 🟢 — ✅ #16
 
 **근거** (`test/index.test.ts`, 14개 테스트)
 - 미검증 경계 사례: 대문자/하이픈 없는 UUID, all-zero / all-`f` UUID, 짧은 입력 `decode`, 128비트 초과 에러 메시지, 빈 문자열, 비문자열 입력(`encode(123 as any)`), default export 객체.
@@ -118,7 +118,7 @@
 **제안**
 - 다음 major에서 `>=20`(또는 `>=18`)으로 상향, #4의 매트릭스와 일치시키기.
 
-## 9. 줄바꿈 정책 부재 — P3 🟢
+## 9. 줄바꿈 정책 부재 — P3 🟢 — ✅ #18
 
 **근거**
 - `.gitattributes` 없음. Windows 작업 시 커밋마다 `LF will be replaced by CRLF` 경고 발생(`yarn.lock`, `.yarn/releases/*.cjs`, tsconfig 등).
@@ -126,7 +126,7 @@
 **제안**
 - `.gitattributes`: `* text=auto eol=lf`, `.yarn/releases/** binary` 등.
 
-## 10. 의존성 자동 업데이트 — P3 🟢
+## 10. 의존성 자동 업데이트 — P3 🟢 — ✅ #19
 
 **근거**
 - 이번 수동 업데이트에서 jest 29→30, TS 5→6 등 큰 폭의 변경이 한꺼번에 발생.
@@ -135,7 +135,7 @@
 **제안**
 - `.github/dependabot.yml`(npm devDependencies, GitHub Actions) 주간 업데이트. `typescript` major는 ignore 규칙으로 고정 후 수동 처리.
 
-## 11. 사소한 코드 정리 — P3 🟢
+## 11. 사소한 코드 정리 — P3 🟢 — ✅ #16
 
 - `decode`의 `index === -1` → `Invalid Base62 character` 분기는 앞선 정규식 검사 때문에 도달 불가능한 코드.
 - `decode`의 `BASE62_CHARS.indexOf`(문자당 O(62)) → 룩업 테이블로 교체 가능(성능 영향은 미미).
@@ -143,7 +143,7 @@
 - `.gitignore`의 `jest.config.js.map` 항목은 현재 구조에서 의미 없음.
 - 루트 `tsconfig.json`의 `outDir: ./dist`는 빌드에 쓰이지 않는데 존재해 혼동 여지 → `noEmit: true`로 명시하고 `include`에 `test/` 포함(에디터 타입 체크용).
 
-## 12. CHANGELOG `Unreleased` 섹션 — P3 🟢
+## 12. CHANGELOG `Unreleased` 섹션 — P3 🟢 — ✅ #18
 
 **근거**
 - 1.3.0 이후 변경(문서, devDependencies, TS 6 마이그레이션)이 CHANGELOG에 기록되지 않음. 릴리스 시 한꺼번에 정리해야 함.
@@ -152,6 +152,12 @@
 - `## [Unreleased]` 섹션을 두고 PR마다 갱신.
 
 ---
+
+## 진행 현황 (2026-11-21)
+
+- 1단계 비파괴 묶음 완료: #16(테스트·정리), #17(CI·소스맵·타입), #18(`.gitattributes`·CHANGELOG), #19(Dependabot)
+- `npm publish` provenance: 이미 trusted publishing(OIDC)으로 자동 생성 중 — 1.3.0에 SLSA provenance 존재, 별도 작업 불필요
+- 남은 항목: #2·#7(동작 변화, 결정 필요), #1·#8(2.0.0)
 
 ## 제안 진행 순서
 

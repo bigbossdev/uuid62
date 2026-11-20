@@ -1,5 +1,9 @@
 # @bboss/uuid62
 
+[![npm](https://img.shields.io/npm/v/@bboss/uuid62)](https://www.npmjs.com/package/@bboss/uuid62)
+[![CI](https://github.com/bigbossdev/uuid62/actions/workflows/ci.yml/badge.svg)](https://github.com/bigbossdev/uuid62/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/@bboss/uuid62)](LICENSE)
+
 A lightweight TypeScript library for encoding and decoding UUIDs to/from Base62 strings, designed exclusively for Node.js environments.
 
 ## Features

@@ -13,6 +13,7 @@
 - Expanded test suite (edge cases, 100% coverage threshold); removed unreachable code in `decode`/`encode` (no behavior change)
 - Updated dev dependencies: Jest 30, TypeScript 6, Yarn 4.18.1
 - Added `.gitattributes` (LF line endings)
+- Added Dependabot for dev dependencies and GitHub Actions; README badges
 
 ## [1.3.0] - 2026-08-01
 
