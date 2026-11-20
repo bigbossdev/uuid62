@@ -8,7 +8,7 @@
 - TypeScript sources (`src/**/*.ts`) are now published so source maps and declaration maps resolve
 
 ### Internal
-- Added PR CI: tests, build, `@arethetypeswrong/cli`, and a runtime smoke test of the built output on Node 16/18/20/22/24
+- Added PR CI: typecheck (new `yarn typecheck` script), tests with 100% coverage threshold, build, `@arethetypeswrong/cli`, and a runtime smoke test of the built output on Node 16/18/20/22/24
 - Publish workflow runs an explicit build step
 - Expanded test suite (edge cases, 100% coverage threshold); removed unreachable code in `decode`/`encode` (no behavior change)
 - Updated dev dependencies: Jest 30, TypeScript 6, Yarn 4.18.1
